@@ -194,7 +194,10 @@ class OptionChainElement():
             s += ' Last: $%.2f' % self.last
         else:
             s += ' Last: N/A'
-
+        if self.impliedVolatility!=None:
+            s += ' Imv: %%%.2f' % self.impliedVolatility
+        else:
+            s += ' Imv: N/A'
         s += " (d: %f g: %f t: %f v: %f r: %f)" % \
             (self.delta, self.gamma, self.theta, self.vega, self.rho)
         #         date
@@ -658,7 +661,7 @@ class TDAmeritradeAPI():
             # Change all "nan" to None to make sure the oce is serializable
             for k in o.__dict__.keys():
                #if (type(o.__dict__[k]) == types.FloatType) and math.isnan(o.__dict__[k]):
-                if isinstance(o.__dict__[k],float) and math.isnan(o.__dict__[k]):
+                if type(o.__dict__[k]) ==float and math.isnan(o.__dict__[k]):
                     logging.info('[tdapi.getBinaryOptionChain] Converting o[%s]=nan to None' % (k))
                     o.__dict__[k] = None
 
