@@ -13,6 +13,7 @@ from struct import pack, unpack
 from xml.etree import ElementTree
 import logging
 
+
 class StockQuote():
     symbol = None
     description = None
@@ -355,7 +356,7 @@ class TDAmeritradeAPI():
             arguments['accountid'] = accountID
         params = urllib.parse.urlencode(arguments)
 
-        conn = httplib.HTTPSConnection('apis.tdameritrade.com')
+        conn = http.client.HTTPSConnection('apis.tdameritrade.com')
         #conn.set_debuglevel(100)
         conn.request('GET', '/apps/100/StreamerInfo?'+params)
         response = conn.getresponse()
@@ -699,7 +700,7 @@ class TDAmeritradeAPI():
                 validArgs[k] = arguments[k]
         params = urllib.parse.urlencode(validArgs)
         #print 'Arguments: ', validArgs
-        conn = httplib.HTTPSConnection('apis.tdameritrade.com')
+        conn = http.client.HTTPSConnection('apis.tdameritrade.com')
 
         conn.set_debuglevel(100)
         conn.request('GET', '/apps/100/PriceHistory?'+params)
@@ -707,7 +708,8 @@ class TDAmeritradeAPI():
         #print response.status, response.reason
         data = response.read()
         conn.close()
-        #print 'Read %d bytes' % len(data)
+        print ('Read %d bytes' % len(data))
+        #print ('%s',data.decode("utf-8"))'
 
         # The first 15 bytes are the header
         # DATA              TYPE        DESCRIPTION
@@ -743,7 +745,7 @@ class TDAmeritradeAPI():
                 cursor += errorLength
                 print ('[PriceHistory] Error:', errorText)
                 raise ValueError
-
+        
         barCount =      unpack('>i', data[cursor:cursor+4])[0]
         cursor += 4
         #print 'Bar count:', barCount
@@ -774,7 +776,7 @@ class TDAmeritradeAPI():
             bars.append(b)
 
         # Finally we should see a terminator of FF
-        if data[cursor:cursor+2] != '\xff\xff':
+        if data[cursor:cursor+2] != b'\xff\xff':
             print ('Did not find terminator at hexdata[%d]!' % cursor)
             raise ValueError
 

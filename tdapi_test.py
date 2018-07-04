@@ -28,6 +28,12 @@ def main():
     for option in chain[:10]:
         print (option)
 
+    print ('Getting historical price for %s' % args.ticker)
+    priceHis=td.getPriceHistory(args.ticker,'DAILY','1','YEAR','1')
+    print ('Returned %d bars. First 10:' % len(chain))
+    for priceBar in priceHis[:10]:
+        print (priceBar)
+        
     td.logout()
 
 
